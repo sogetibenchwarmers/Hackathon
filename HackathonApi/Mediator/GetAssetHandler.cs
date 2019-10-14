@@ -65,6 +65,17 @@ namespace HackathonApi.Mediator
                         asset.SupportGroup = _mapper.Map<SupportGroup>(snSupportGroup.Result);
                     }
                 }
+
+                if (snAsset.OwnedBy != null && !string.IsNullOrWhiteSpace(snAsset.OwnedBy.Link))
+                {
+                    var userUri = new Uri(snAsset.OwnedBy.Link);
+                    var userResponse = await client.GetAsync(userUri, cancellationToken);
+                    if (userResponse.IsSuccessStatusCode)
+                    {
+                        var snUser = await userResponse.Content.ReadAsAsync<ServiceNowUserResult>();
+                        asset.OwnedBy = _mapper.Map<User>(snUser.Result);
+                    }
+                }
                 return asset;
             }
         }

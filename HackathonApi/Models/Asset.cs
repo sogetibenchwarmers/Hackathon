@@ -13,7 +13,7 @@ namespace HackathonApi.Models
 
         public string Name { get; set; }
 
-        public string OwnedBy { get; set; }
+        public User OwnedBy { get; set; }
 
         public Location Location { get; set; }
 

@@ -9,11 +9,14 @@ namespace HackathonApi
         {
             CreateMap<ServiceNowAsset, Asset>()
                 .ForMember(dest => dest.Location, src => src.Ignore())
+                .ForMember(dest => dest.OwnedBy, src => src.Ignore())
                 .ForMember(dest => dest.SupportGroup, src => src.Ignore());
 
             CreateMap<ServiceNowLocation, Location>();
 
             CreateMap<ServiceNowSupportGroup, SupportGroup>();
+
+            CreateMap<ServiceNowUser, User>();
         }
     }
 }

@@ -155,7 +155,6 @@ public class AssetsController : ControllerBase
             return NotFound($"Asset with asset tag {assetTag} not found.");
         }
         asset.Name = putRequest.Name;
-        asset.OwnedBy = putRequest.OwnedBy;
         asset.Status = putRequest.Status;
         asset.SupportGroup.Id = putRequest.SupportGroupId;
         asset.AssignmentGroup = putRequest.AssignmentGroup;

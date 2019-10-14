@@ -8,8 +8,6 @@ namespace HackathonApi.Models
 
         public string Name { get; set; }
 
-        public string OwnedBy { get; set; }
-
         public Guid LocationId { get; set; }
 
         public Guid SubLocationId { get; set; }

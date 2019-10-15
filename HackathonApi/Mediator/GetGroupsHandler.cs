@@ -31,25 +31,23 @@ namespace HackathonApi.Mediator
 
             if (!_cache.TryGetValue(groupEndpoint, out IEnumerable<SupportGroup> groups))
             {
-                using (var client = new HttpClient { BaseAddress = new Uri(_options.ServiceNowHost) })
+                var client = new HttpClient { BaseAddress = new Uri(_options.ServiceNowHost) };
+                client.DefaultRequestHeaders.Add("Authorization", "Basic " + _options.BuildAuthHeader());
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                var response = await client.GetAsync(groupEndpoint, cancellationToken);
+                if (response.IsSuccessStatusCode)
                 {
-                    client.DefaultRequestHeaders.Add("Authorization", "Basic " + _options.BuildAuthHeader());
-                    client.DefaultRequestHeaders.Add("Accept", "application/json");
-                    var response = await client.GetAsync(groupEndpoint, cancellationToken);
-                    if (response.IsSuccessStatusCode)
+                    var snGroups = (await response.Content.ReadAsAsync<ServiceNowSupportGroupsResult>()).Result;
+                    if (snGroups != null && snGroups.Any())
                     {
-                        var snGroups = (await response.Content.ReadAsAsync<ServiceNowSupportGroupsResult>()).Result;
-                        if (snGroups != null && snGroups.Any())
+                        var groupList = new List<SupportGroup>();
+                        foreach (var snGroup in snGroups)
                         {
-                            var groupList = new List<SupportGroup>();
-                            foreach (var snGroup in snGroups)
-                            {
-                                groupList.Add(_mapper.Map<SupportGroup>(snGroup));
-                            }
-                            groups = groupList;
+                            groupList.Add(_mapper.Map<SupportGroup>(snGroup));
                         }
-                        _cache.Set(groupEndpoint, groups);
+                        groups = groupList;
                     }
+                    _cache.Set(groupEndpoint, groups);
                 }
             }
 

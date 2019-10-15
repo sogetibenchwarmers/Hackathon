@@ -30,9 +30,6 @@ namespace HackathonApi.Mediator
             const string assetsEndpoint = "alm_asset";
 
             var client = new HttpClient { BaseAddress = new Uri(_options.ServiceNowHost) };
-            client.DefaultRequestHeaders.Add("Authorization", "Basic " + _options.BuildAuthHeader());
-            client.DefaultRequestHeaders.Add("Accept", "application/json");
-            client.DefaultRequestHeaders.Add("Content-Type", "application/json");
 
             var patchRequest = _mapper.Map<ServiceNowAssetPatchRequest>(request.PutRequest);
             var content = JsonConvert.SerializeObject(patchRequest);
@@ -43,6 +40,8 @@ namespace HackathonApi.Mediator
             {
                 Content = byteContent
             };
+            httpRequest.Headers.Add("Authorization", "Basic " + _options.BuildAuthHeader());
+            httpRequest.Headers.Add("Accept", "application/json");
 
             await client.SendAsync(httpRequest, cancellationToken);
             return await _mediator.Send(new GetAssetRequest(request.PutRequest.AssetTag));

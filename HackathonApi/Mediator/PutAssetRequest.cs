@@ -9,11 +9,13 @@ namespace HackathonApi.Mediator
 {
     public class PutAssetRequest : IRequest<Asset>
     {
-        public PutAssetRequest(AssetPutRequest putRequest)
+        public PutAssetRequest(string assetTag, AssetPutRequest putRequest)
         {
+            AssetTag = assetTag;
             PutRequest = putRequest;
         }
 
+        public string AssetTag { get; }
         public AssetPutRequest PutRequest { get; }
     }
 }

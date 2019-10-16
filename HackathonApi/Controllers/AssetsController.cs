@@ -149,6 +149,6 @@ public class AssetsController : ControllerBase
     [ProducesResponseType(404, Type = typeof(void))]
     public async Task<IActionResult> UpdateAsset([FromRoute] string assetTag, [FromBody] AssetPutRequest putRequest)
     {
-        return Ok(await _mediator.Send(new PutAssetRequest(putRequest)));
+        return Ok(await _mediator.Send(new PutAssetRequest(assetTag, putRequest)));
     }
 }

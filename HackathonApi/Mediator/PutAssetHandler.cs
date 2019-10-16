@@ -27,7 +27,7 @@ namespace HackathonApi.Mediator
         }
         public async Task<Asset> Handle(PutAssetRequest request, CancellationToken cancellationToken)
         {
-            const string assetsEndpoint = "alm_asset";
+            var assetsEndpoint = $"alm_asset/{request.PutRequest.Id.ToUuid()}";
 
             var client = new HttpClient { BaseAddress = new Uri(_options.ServiceNowHost) };
 
@@ -42,9 +42,16 @@ namespace HackathonApi.Mediator
             };
             httpRequest.Headers.Add("Authorization", "Basic " + _options.BuildAuthHeader());
             httpRequest.Headers.Add("Accept", "application/json");
+            httpRequest.Content.Headers.Add("Content-Type", "application/json");
 
-            await client.SendAsync(httpRequest, cancellationToken);
-            return await _mediator.Send(new GetAssetRequest(request.PutRequest.AssetTag));
+            var response = await client.SendAsync(httpRequest, cancellationToken);
+            var result = await response.Content.ReadAsAsync<ServiceNowAssetResult>();
+            if (result == null)
+            {
+                return null;
+            }
+
+            return await _mediator.Send(new TransformResponseToAssetRequest(client, result.Result));
         }
     }
 }

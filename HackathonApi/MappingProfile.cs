@@ -20,6 +20,7 @@ namespace HackathonApi
 
             CreateMap<AssetPutRequest, ServiceNowAssetPatchRequest>()
                 .ForMember(dest => dest.Location, src => src.MapFrom(x => x.LocationId.ToUuid()))
+                .ForMember(dest => dest.OwnedBy, src => src.MapFrom(x => x.OwnedById.ToUuid()))
                 .ForMember(dest => dest.SupportGroup, src => src.MapFrom(x => x.SupportGroupId.ToUuid()));
         }
     }

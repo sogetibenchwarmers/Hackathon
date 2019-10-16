@@ -4,12 +4,13 @@ namespace HackathonApi.Models
 {
     public class ServiceNowAssetPatchRequest
     {
-        [JsonProperty("asset_tag")]
-        public string AssetTag { get; set; }
-
+        [JsonProperty("location")]
         public string Location { get; set; }
 
         [JsonProperty("support_group")]
         public string SupportGroup { get; set; }
+
+        [JsonProperty("owned_by")]
+        public string OwnedBy { get; set; }
     }
 }

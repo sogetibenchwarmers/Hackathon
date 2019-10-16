@@ -29,27 +29,25 @@ namespace HackathonApi.Mediator
             const string assetsEndpoint = "alm_asset";
 
             var result = new AssetList();
-            using (var client = new HttpClient { BaseAddress = new Uri(_options.ServiceNowHost) })
+            var client = new HttpClient { BaseAddress = new Uri(_options.ServiceNowHost) };
+            client.DefaultRequestHeaders.Add("Authorization", "Basic " + _options.BuildAuthHeader());
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            var response = await client.GetAsync(assetsEndpoint, cancellationToken);
+            if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                client.DefaultRequestHeaders.Add("Authorization", "Basic " + _options.BuildAuthHeader());
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
-                var response = await client.GetAsync(assetsEndpoint, cancellationToken);
-                if (response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return result;
-                }
-                var snAssets = await response.Content.ReadAsAsync<ServiceNowAssets>();
-                if (snAssets != null && snAssets.Result.Any())
-                {
-                    var assets = new List<Asset>();
-                    foreach (var snAsset in snAssets.Result)
-                    {
-                        assets.Add(_mapper.Map<Asset>(snAsset));
-                    }
-                    result.Data = assets;
-                }
                 return result;
             }
+            var snAssets = await response.Content.ReadAsAsync<ServiceNowListResult<ServiceNowAsset>>();
+            if (snAssets != null && snAssets.Result.Any())
+            {
+                var assets = new List<Asset>();
+                foreach (var snAsset in snAssets.Result)
+                {
+                    assets.Add(_mapper.Map<Asset>(snAsset));
+                }
+                result.Data = assets;
+            }
+            return result;
         }
     }
 }

@@ -38,22 +38,20 @@ namespace HackathonApi.Mediator
 
             if (!_cache.TryGetValue(locationEndpoint, out IEnumerable<ServiceNowLocation> locations))
             {
-                using (var client = new HttpClient { BaseAddress = new Uri(_options.ServiceNowHost) })
+                var client = new HttpClient { BaseAddress = new Uri(_options.ServiceNowHost) };
+                client.DefaultRequestHeaders.Add("Authorization", "Basic " + _options.BuildAuthHeader());
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                var response = await client.GetAsync(locationEndpoint, cancellationToken);
+                if (response.IsSuccessStatusCode)
                 {
-                    client.DefaultRequestHeaders.Add("Authorization", "Basic " + _options.BuildAuthHeader());
-                    client.DefaultRequestHeaders.Add("Accept", "application/json");
-                    var response = await client.GetAsync(locationEndpoint, cancellationToken);
-                    if (response.IsSuccessStatusCode)
+                    locations = (await response.Content.ReadAsAsync<ServiceNowListResult<ServiceNowLocation>>()).Result;
+                    var left = 0;
+                    foreach (var loc in locations.Where(l => l.Parent?.Value == null))
                     {
-                        locations = (await response.Content.ReadAsAsync<ServiceNowLocationsResult>()).Result;
-                        var left = 0;
-                        foreach (var loc in locations.Where(l => l.Parent?.Value == null))
-                        {
-                            left = TraverseHierarchy(loc, locations, left);
-                        }
-                        var test = new List<string>();
-                        _cache.Set(locationEndpoint, locations.OrderBy(l => l.Left));
+                        left = TraverseHierarchy(loc, locations, left);
                     }
+                    var test = new List<string>();
+                    _cache.Set(locationEndpoint, locations.OrderBy(l => l.Left));
                 }
             }
 
@@ -79,7 +77,7 @@ namespace HackathonApi.Mediator
                     lastChild = loc;
                 }
             }
-            location.Right = lastChild == null ? ++left : lastChild.Right +1;
+            location.Right = lastChild == null ? ++left : lastChild.Right + 1;
             return location.Right;
         }
     }

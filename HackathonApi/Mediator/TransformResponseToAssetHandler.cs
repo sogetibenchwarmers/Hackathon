@@ -32,8 +32,19 @@ namespace HackathonApi.Mediator
                 var locationResponse = await client.GetAsync(locationUri, cancellationToken);
                 if (locationResponse.IsSuccessStatusCode)
                 {
-                    var snLocation = await locationResponse.Content.ReadAsAsync<ServiceNowLocationResult>();
+                    var snLocation = await locationResponse.Content.ReadAsAsync<ServiceNowResult<ServiceNowLocation>>();
                     asset.Location = _mapper.Map<Location>(snLocation.Result);
+                }
+            }
+
+            if (snAsset.Department != null && !string.IsNullOrWhiteSpace(snAsset.Department.Link))
+            {
+                var deptUri = new Uri(snAsset.Department.Link);
+                var deptResponse = await client.GetAsync(deptUri, cancellationToken);
+                if (deptResponse.IsSuccessStatusCode)
+                {
+                    var snDepartment = await deptResponse.Content.ReadAsAsync<ServiceNowResult<ServiceNowDepartment>>();
+                    asset.SubLocation = _mapper.Map<SubLocation>(snDepartment.Result);
                 }
             }
 
@@ -43,7 +54,7 @@ namespace HackathonApi.Mediator
                 var sgResponse = await client.GetAsync(sgUri, cancellationToken);
                 if (sgResponse.IsSuccessStatusCode)
                 {
-                    var snSupportGroup = await sgResponse.Content.ReadAsAsync<ServiceNowSupportGroupResult>();
+                    var snSupportGroup = await sgResponse.Content.ReadAsAsync<ServiceNowResult<ServiceNowSupportGroup>>();
                     asset.SupportGroup = _mapper.Map<SupportGroup>(snSupportGroup.Result);
                 }
             }

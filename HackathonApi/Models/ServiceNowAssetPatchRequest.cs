@@ -7,6 +7,9 @@ namespace HackathonApi.Models
         [JsonProperty("location")]
         public string Location { get; set; }
 
+        [JsonProperty("department")]
+        public string Department { get; set; }
+
         [JsonProperty("support_group")]
         public string SupportGroup { get; set; }
 

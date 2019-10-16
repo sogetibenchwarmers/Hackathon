@@ -23,6 +23,8 @@ namespace HackathonApi.Models
 
         public RelatedContent Location { get; set; }
 
+        public RelatedContent Department { get; set; }
+
         public RelatedContent Status { get; set; }
 
         [JsonProperty("support_group")]

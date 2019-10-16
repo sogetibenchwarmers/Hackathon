@@ -44,7 +44,7 @@ namespace HackathonApi.Mediator
                 var response = await client.GetAsync(locationEndpoint, cancellationToken);
                 if (response.IsSuccessStatusCode)
                 {
-                    locations = (await response.Content.ReadAsAsync<ServiceNowLocationsResult>()).Result;
+                    locations = (await response.Content.ReadAsAsync<ServiceNowListResult<ServiceNowLocation>>()).Result;
                     var left = 0;
                     foreach (var loc in locations.Where(l => l.Parent?.Value == null))
                     {

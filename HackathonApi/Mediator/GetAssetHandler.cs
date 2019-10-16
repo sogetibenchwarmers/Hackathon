@@ -36,7 +36,7 @@ namespace HackathonApi.Mediator
             {
                 return null;
             }
-            var snAssets = await response.Content.ReadAsAsync<ServiceNowAssets>();
+            var snAssets = await response.Content.ReadAsAsync<ServiceNowListResult<ServiceNowAsset>>();
             if (snAssets == null || !snAssets.Result.Any())
             {
                 return null;

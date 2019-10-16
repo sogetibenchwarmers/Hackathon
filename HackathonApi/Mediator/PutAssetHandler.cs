@@ -45,7 +45,7 @@ namespace HackathonApi.Mediator
             httpRequest.Content.Headers.Add("Content-Type", "application/json");
 
             var response = await client.SendAsync(httpRequest, cancellationToken);
-            var result = await response.Content.ReadAsAsync<ServiceNowAssetResult>();
+            var result = await response.Content.ReadAsAsync<ServiceNowResult<ServiceNowAsset>>();
             if (result == null)
             {
                 return null;

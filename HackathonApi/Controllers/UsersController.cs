@@ -12,20 +12,20 @@ namespace HackathonApi.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class GroupsController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public GroupsController(IMediator mediator)
+        public UsersController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(SupportGroupList))]
+        [ProducesResponseType(200, Type = typeof(UserList))]
         public async Task<IActionResult> GetLocations()
         {
-            return Ok(await _mediator.Send(new GetGroupsRequest()));
+            return Ok(await _mediator.Send(new GetUsersRequest()));
         }
     }
 }

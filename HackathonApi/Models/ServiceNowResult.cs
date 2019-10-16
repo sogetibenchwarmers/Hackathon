@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace HackathonApi.Models
 {
-    public class ServiceNowAssetResult
+    public class ServiceNowResult<T>
     {
-        public ServiceNowAsset Result { get; set; }
+        public T Result { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace HackathonApi.Models
 
         public Location Location { get; set; }
 
-        public Location SubLocation { get; set; }
+        public SubLocation SubLocation { get; set; }
 
         public string Status { get; set; }
 

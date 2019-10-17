@@ -13,23 +13,23 @@ using System.Threading.Tasks;
 
 namespace HackathonApi.Mediator
 {
-    public class GetGroupsHandler : IRequestHandler<GetGroupsRequest, SupportGroupList>
+    public class GetSubLocationsHandler : IRequestHandler<GetSubLocationsRequest, SubLocationList>
     {
         private readonly ServiceNowOptions _options;
         private readonly IMapper _mapper;
         private readonly IMemoryCache _cache;
 
-        public GetGroupsHandler(IOptions<ServiceNowOptions> options, IMapper mapper, IMemoryCache cache)
+        public GetSubLocationsHandler(IOptions<ServiceNowOptions> options, IMapper mapper, IMemoryCache cache)
         {
             _options = options.Value;
             _mapper = mapper;
             _cache = cache;
         }
-        public async Task<SupportGroupList> Handle(GetGroupsRequest request, CancellationToken cancellationToken)
+        public async Task<SubLocationList> Handle(GetSubLocationsRequest request, CancellationToken cancellationToken)
         {
-            const string groupEndpoint = "sys_user_group";
+            const string groupEndpoint = "cmn_department";
 
-            if (!_cache.TryGetValue(groupEndpoint, out IEnumerable<SupportGroup> groups))
+            if (!_cache.TryGetValue(groupEndpoint, out IEnumerable<SubLocation> subLocations))
             {
                 var client = new HttpClient { BaseAddress = new Uri(_options.ServiceNowHost) };
                 client.DefaultRequestHeaders.Add("Authorization", "Basic " + _options.BuildAuthHeader());
@@ -37,21 +37,21 @@ namespace HackathonApi.Mediator
                 var response = await client.GetAsync(groupEndpoint, cancellationToken);
                 if (response.IsSuccessStatusCode)
                 {
-                    var snGroups = (await response.Content.ReadAsAsync<ServiceNowListResult<ServiceNowSupportGroup>>()).Result;
-                    if (snGroups != null && snGroups.Any())
+                    var listResult = (await response.Content.ReadAsAsync<ServiceNowListResult<ServiceNowDepartment>>()).Result;
+                    if (listResult != null && listResult.Any())
                     {
-                        var groupList = new List<SupportGroup>();
-                        foreach (var snGroup in snGroups)
+                        var slList = new List<SubLocation>();
+                        foreach (var snDept in listResult)
                         {
-                            groupList.Add(_mapper.Map<SupportGroup>(snGroup));
+                            slList.Add(_mapper.Map<SubLocation>(snDept));
                         }
-                        groups = groupList;
+                        subLocations = slList;
                     }
-                    _cache.Set(groupEndpoint, groups);
+                    _cache.Set(groupEndpoint, subLocations);
                 }
             }
 
-            return new SupportGroupList { Data = groups };
+            return new SubLocationList { Data = subLocations };
         }
     }
 }

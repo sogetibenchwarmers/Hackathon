@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HackathonApi.Mediator
 {
-    public class GetGroupsRequest : IRequest<SupportGroupList>
+    public class GetUsersRequest : IRequest<UserList>
     {
     }
 }

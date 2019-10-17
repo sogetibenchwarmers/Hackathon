@@ -67,19 +67,6 @@ public class AssetsController : ControllerBase
     [ProducesResponseType(404, Type = typeof(void))]
     public async Task<IActionResult> UpdateAsset([FromRoute] string assetTag, [FromBody] AssetPutRequest putRequest)
     {
-        var asset = _assetList.Data.FirstOrDefault(a => a.AssetTag == assetTag);
-        if (asset == null)
-        {
-            return NotFound($"Asset with asset tag {assetTag} not found.");
-        }
-        asset.Name = putRequest.Name;
-        asset.Status = putRequest.Status;
-        asset.SupportGroup.Id = putRequest.SupportGroupId;
-        asset.AssignmentGroup = putRequest.AssignmentGroup;
-        asset.Location.Id = putRequest.LocationId;
-        asset.SubLocation.Id = putRequest.LocationId;
-        asset.Status = putRequest.Status;
-
-        return Ok(asset);
+        return Ok(await _mediator.Send(new PutAssetRequest(assetTag, putRequest)));
     }
 }

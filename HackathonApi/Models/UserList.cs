@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace HackathonApi.Models
 {
-    public class SupportGroupsList
+    public class UserList
     {
-        public IEnumerable<SupportGroup> Data { get; set; }
+        public IEnumerable<User> Data { get; set; }
 
         public int Count => Data.Count();
     }

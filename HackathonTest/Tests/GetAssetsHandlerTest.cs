@@ -3,7 +3,7 @@ using Xunit;
 
 namespace HackathonTest
 {
-    public class UnitTest1
+    public class GetAssetsHandlerTest
     {
         [Fact]
         public void Test1()

@@ -11,94 +11,13 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/v1/[controller]")]
 public class AssetsController : ControllerBase
 {
-    static AssetList assetList;
     private readonly IMediator _mediator;
-
-    static AssetsController()
-    {
-        assetList = new AssetList();
-        //assetList.Data = new List<Asset>
-        //{
-        //    new Asset
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        AssetTag = "P0001",
-        //        Name = "Dell Latitude E7450",
-        //        OwnedBy = "Jane Doe",
-        //        Location = new Location
-        //        {
-        //            Id = Guid.NewGuid(),
-        //            Name = "New York Office",
-        //            Street = "1535 West 32nd Street",
-        //            City = "New York",
-        //            State = "NY",
-        //            Zip = "10101"
-        //        },
-        //        Status = "Active",
-        //        SupportGroup = "IT",
-        //        AssignmentGroup = "Marketing"
-        //    },
-        //    new Asset
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        AssetTag = "P0002",
-        //        Name = "Dell 32 inch monitor",
-        //        OwnedBy = "Jane Doe",
-        //        Location = new Location
-        //        {
-        //            Name = "New York Office",
-        //            Street = "1535 West 32nd Street",
-        //            City = "New York",
-        //            State = "NY",
-        //            Zip = "10101"
-        //        },
-        //        Status = "Active",
-        //        SupportGroup = "IT",
-        //        AssignmentGroup = "Marketing"
-        //    },
-        //    new Asset
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        AssetTag = "P0003",
-        //        Name = "Logitech Keyboard",
-        //        OwnedBy = "Jane Doe",
-        //        Location = new Location
-        //        {
-        //            Name = "New York Office",
-        //            Street = "1535 West 32nd Street",
-        //            City = "New York",
-        //            State = "NY",
-        //            Zip = "10101"
-        //        },
-        //        Status = "Active",
-        //        SupportGroup = "IT",
-        //        AssignmentGroup = "Marketing"
-        //    },
-        //    new Asset
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        AssetTag = "P0001",
-        //        Name = "Logitech Wireless Mouse",
-        //        OwnedBy = "Jane Doe",
-        //        Location = new Location
-        //        {
-        //            Name = "New York Office",
-        //            Street = "1535 West 32nd Street",
-        //            City = "New York",
-        //            State = "NY",
-        //            Zip = "10101"
-        //        },
-        //        Status = "Active",
-        //        SupportGroup = "IT",
-        //        AssignmentGroup = "Marketing"
-        //    }
-        //};
-
-    }
+    static AssetList _assetList;
 
     public AssetsController(IMediator mediator)
     {
         _mediator = mediator;
+        _assetList = new AssetList();
     }
 
     /// <summary>
@@ -128,7 +47,6 @@ public class AssetsController : ControllerBase
     [ProducesResponseType(404, Type = typeof(void))]
     public async Task<IActionResult> GetAsset([FromRoute] string assetTag)
     {
-        //var asset = assetList.Data.FirstOrDefault(a => a.AssetTag == assetTag);
         var asset = await _mediator.Send(new GetAssetRequest(assetTag));
         if (asset == null)
         {
@@ -149,7 +67,7 @@ public class AssetsController : ControllerBase
     [ProducesResponseType(404, Type = typeof(void))]
     public async Task<IActionResult> UpdateAsset([FromRoute] string assetTag, [FromBody] AssetPutRequest putRequest)
     {
-        var asset = assetList.Data.FirstOrDefault(a => a.AssetTag == assetTag);
+        var asset = _assetList.Data.FirstOrDefault(a => a.AssetTag == assetTag);
         if (asset == null)
         {
             return NotFound($"Asset with asset tag {assetTag} not found.");
